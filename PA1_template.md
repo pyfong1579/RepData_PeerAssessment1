@@ -8,6 +8,8 @@ output:
 
 ## Libraries, Data Loading & pre-processing.
 
+#### Libraries used as per code block:
+
 ```r
 library(dplyr)
 library(data.table)
@@ -22,8 +24,10 @@ if(!"data" %in% ls()) {
 }
 mutate(data, date=as.Date(date,format='%Y-%m-%d'))
 ```
+#### Date data converted from character to date format.
 
 ## What is mean total number of steps taken per day?
+**NB:** NA values are ignored. 
 
 ```r
 ### Set up grouped by date data table
@@ -46,11 +50,7 @@ text(x=median_tot_steps, 39, paste("median", "\n", median_tot_steps), cex=.8, po
 
 ![](PA1_template_files/figure-html/totalsteps-1.png)<!-- -->
 
-```r
-### Create png file
-dev.copy(png,file = "./figure/total_daily_steps.png", width = 480, height = 480, units = "px")
-dev.off()
-```
+#### Mean & Median total number of steps taken per day shown in figure.
 
 ## What is the average daily activity pattern?
 
@@ -73,11 +73,7 @@ text(max_int, max_avg_steps, paste('Max.avg.steps at interval ',max_int,'\n =',m
 
 ![](PA1_template_files/figure-html/activity pattern-1.png)<!-- -->
 
-```r
-#### Create png file
-dev.copy(png,file = "./figure/avg_steps_interval.png", width = 480, height = 480, units = "px")
-dev.off()
-```
+#### Interval 835, on average across all the days in the dataset, contains the maximum number of steps = 206 as shown in figure.
 
 ## Imputing missing values
 
@@ -85,7 +81,16 @@ dev.off()
 ### check for missing (NA)
 missing <- data %>% count(missing = is.na(steps))
 print (paste("Missing Value Count = ", missing$n[which(missing$missing==TRUE)]))
+```
 
+```
+## [1] "Missing Value Count =  2304"
+```
+
+Missing values are replaced with the daily mean of the 5 min. intervals.  
+
+
+```r
 ### Replace NA with mean value for interval
 
 data_fill <- data
@@ -111,13 +116,10 @@ abline(v=median_tot_steps_fill, col="red", lty=1, lwd=2)
 text(x=median_tot_steps_fill, 39, paste("median", "\n", median_tot_steps_fill), cex=.8, pos=4, col ='red')
 ```
 
-![](PA1_template_files/figure-html/missing values-1.png)<!-- -->
+![](PA1_template_files/figure-html/missing values replaced-1.png)<!-- -->
 
-```r
-# Create png file
-dev.copy(png,file = "./figure/total_daily_steps_fill.png", width = 480, height = 480, units = "px")
-dev.off()
-```
+#### The **mean** and **median** values from the missing value adjusted dataset differs from the estimates from the first part of the assignment.  
+#### The impact of imputing missing data seems to adjust the distribution of steps more towards a normal distribution bringing the mean and median much closer together.  
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -140,8 +142,9 @@ step_avg_week$weekday[step_avg_week$weekday==FALSE] <- "weekend"
 chart <- ggplot(step_avg_week, aes(x=interval, y= avg_steps))
 chart <- chart + geom_line(col='steelblue')
 chart <- chart + facet_wrap(~ weekday, ncol = 1)
-chart <- chart + ylab("Number of steps")
+chart <- chart + labs(title = "Weekday vs. Weekend Activity", y="Number of steps")
 chart <- chart + theme_bw()
+chart <- chart + theme(plot.title = element_text(hjust = 0.5))
 chart <- chart + theme(panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
                        strip.background =element_rect(fill=brewer.pal(n = 3, name = "Reds")))
 print(chart)
@@ -149,8 +152,8 @@ print(chart)
 
 ![](PA1_template_files/figure-html/weekdays-1.png)<!-- -->
 
-```r
-# Create png file
-dev.copy(png,file = "./figure/average_steps_weekday.png", width = 480, height = 480, units = "px")
-dev.off()
-```
+#### Using the filled-in missing values dataset, the Weekday vs. Weekend Activty comparison above shows:-  
+#### * a similar pattern of activity starting slightly later on weekends.  
+#### * a higher peak step count around the 800 interval on weekdays.  
+#### * slightly higher activity between intervals 1000 to 2000 on weekends.  
+ 

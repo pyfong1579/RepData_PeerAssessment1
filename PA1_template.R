@@ -31,10 +31,6 @@ median_tot_steps <- median(step_tot$tot_steps, na.rm=T)
 abline(v=median_tot_steps, col="red", lty=1, lwd=2)
 text(x=median_tot_steps, 39, paste("median", "\n", median_tot_steps), cex=.8, pos=4, col ='red')
 
-### Create png file
-dev.copy(png,file = "./figure/total_daily_steps.png", width = 480, height = 480, units = "px")
-dev.off()
-
 ## What is the average daily activity pattern?----------------------------------
 
 ### Averaging daily steps by interval
@@ -51,10 +47,6 @@ max_avg_steps <- as.integer(max(step_avg$avg_steps,na.rm=T))
 max_int <- step_avg$interval[which.max(step_avg$avg_steps)]
 points(max_int, max_avg_steps,pch=19)
 text(max_int, max_avg_steps, paste('Max.avg.steps at interval ',max_int,'\n =',max_avg_steps),cex=0.8,col='blue',pos=4)
-
-#### Create png file
-dev.copy(png,file = "./figure/avg_steps_interval.png", width = 480, height = 480, units = "px")
-dev.off()
 
 ## Inputing missing values------------------------------------------------------
 
@@ -85,10 +77,6 @@ median_tot_steps_fill <- median(step_tot_fill$tot_steps, na.rm=T)
 abline(v=median_tot_steps_fill, col="red", lty=1, lwd=2)
 text(x=median_tot_steps_fill, 39, paste("median", "\n", median_tot_steps_fill), cex=.8, pos=4, col ='red')
 
-# Create png file
-dev.copy(png,file = "./figure/total_daily_steps_fill.png", width = 480, height = 480, units = "px")
-dev.off()
-
 ## Are there differences in activity patterns between weekdays and weekends?----
 
 ### create factor for weekday
@@ -109,12 +97,9 @@ step_avg_week$weekday[step_avg_week$weekday==FALSE] <- "weekend"
 chart <- ggplot(step_avg_week, aes(x=interval, y= avg_steps))
 chart <- chart + geom_line(col='steelblue')
 chart <- chart + facet_wrap(~ weekday, ncol = 1)
-chart <- chart + ylab("Number of steps")
+chart <- chart + labs(title = "Weekday vs. Weekend Activity", y="Number of steps")
 chart <- chart + theme_bw()
+chart <- chart + theme(plot.title = element_text(hjust = 0.5))
 chart <- chart + theme(panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
                        strip.background =element_rect(fill=brewer.pal(n = 3, name = "Reds")))
 print(chart)
-
-# Create png file
-dev.copy(png,file = "./figure/average_steps_weekday.png", width = 480, height = 480, units = "px")
-dev.off()
