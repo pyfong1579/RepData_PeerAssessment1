@@ -4,13 +4,11 @@ output:
   html_document:
     keep_md: true
 ---
-```{r setup, echo=F}
-knitr::opts_chunk$set(echo = T, eval = T, message=F, results='hide')
-```
+
 
 ## Libraries, Data Loading & pre-processing.
-```{r load}
 
+```r
 library(dplyr)
 library(data.table)
 library(timeDate)
@@ -23,12 +21,11 @@ if(!"data" %in% ls()) {
   data <- fread("activity.csv")
 }
 mutate(data, date=as.Date(date,format='%Y-%m-%d'))
-
 ```
 
 ## What is mean total number of steps taken per day?
-```{r totalsteps}
 
+```r
 ### Set up grouped by date data table
 step_tot <- data %>%
   group_by(date) %>%
@@ -45,16 +42,19 @@ text(x=mean_tot_steps, y=39, label=paste("mean", "\n", mean_tot_steps), cex=.8, 
 median_tot_steps <- median(step_tot$tot_steps, na.rm=T)
 abline(v=median_tot_steps, col="red", lty=1, lwd=2)
 text(x=median_tot_steps, 39, paste("median", "\n", median_tot_steps), cex=.8, pos=4, col ='red')
+```
 
+![](PA1_template_files/figure-html/totalsteps-1.png)<!-- -->
+
+```r
 ### Create png file
 dev.copy(png,file = "./figure/total_daily_steps.png", width = 480, height = 480, units = "px")
 dev.off()
-
 ```
 
 ## What is the average daily activity pattern?
-```{r activity pattern}
 
+```r
 ### Averaging daily steps by interval
 step_avg <- data %>%
   group_by(interval) %>%
@@ -69,16 +69,19 @@ max_avg_steps <- as.integer(max(step_avg$avg_steps,na.rm=T))
 max_int <- step_avg$interval[which.max(step_avg$avg_steps)]
 points(max_int, max_avg_steps,pch=19)
 text(max_int, max_avg_steps, paste('Max.avg.steps at interval ',max_int,'\n =',max_avg_steps),cex=0.8,col='blue',pos=4)
+```
 
+![](PA1_template_files/figure-html/activity pattern-1.png)<!-- -->
+
+```r
 #### Create png file
 dev.copy(png,file = "./figure/avg_steps_interval.png", width = 480, height = 480, units = "px")
 dev.off()
-
 ```
 
 ## Imputing missing values
-```{r missing values}
 
+```r
 ### check for missing (NA)
 missing <- data %>% count(missing = is.na(steps))
 print (paste("Missing Value Count = ", missing$n[which(missing$missing==TRUE)]))
@@ -106,16 +109,19 @@ text(x=mean_tot_steps_fill, y=39, label=paste("mean", "\n", mean_tot_steps_fill)
 median_tot_steps_fill <- median(step_tot_fill$tot_steps, na.rm=T)
 abline(v=median_tot_steps_fill, col="red", lty=1, lwd=2)
 text(x=median_tot_steps_fill, 39, paste("median", "\n", median_tot_steps_fill), cex=.8, pos=4, col ='red')
+```
 
+![](PA1_template_files/figure-html/missing values-1.png)<!-- -->
+
+```r
 # Create png file
 dev.copy(png,file = "./figure/total_daily_steps_fill.png", width = 480, height = 480, units = "px")
 dev.off()
-
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r weekdays}
 
+```r
 ### create factor for weekday
 data_fill <- data_fill %>% mutate(weekday = as.factor(isWeekday(date)))
 
@@ -139,7 +145,11 @@ chart <- chart + theme_bw()
 chart <- chart + theme(panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
                        strip.background =element_rect(fill=brewer.pal(n = 3, name = "Reds")))
 print(chart)
+```
 
+![](PA1_template_files/figure-html/weekdays-1.png)<!-- -->
+
+```r
 # Create png file
 dev.copy(png,file = "./figure/average_steps_weekday.png", width = 480, height = 480, units = "px")
 dev.off()

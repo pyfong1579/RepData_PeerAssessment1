@@ -1,4 +1,4 @@
-## Libraries & Data Loading and pre-processing ---------------------------------
+## Libraries,Data Loading & pre-processing ---------------------------------
 library(dplyr)
 library(data.table)
 library(timeDate)
@@ -14,7 +14,7 @@ mutate(data, date=as.Date(date,format='%Y-%m-%d'))
 
 ## What is mean total number of steps taken per day?----------------------------
 
-### set up grouped by date data
+### Set up grouped by date data table
 step_tot <- data %>%
   group_by(date) %>%
   summarise(tot_steps = sum(steps,na.rm=T))
@@ -89,7 +89,7 @@ text(x=median_tot_steps_fill, 39, paste("median", "\n", median_tot_steps_fill), 
 dev.copy(png,file = "./figure/total_daily_steps_fill.png", width = 480, height = 480, units = "px")
 dev.off()
 
-## Are there differences in activity patterns between weekdays and weekends?
+## Are there differences in activity patterns between weekdays and weekends?----
 
 ### create factor for weekday
 data_fill <- data_fill %>% mutate(weekday = as.factor(isWeekday(date)))
@@ -99,7 +99,7 @@ step_avg_week <- data_fill %>%
   group_by(interval, weekday)%>%
   summarise(avg_steps = mean(steps, na.rm=T))
 
-### Cnverting logical to label factor
+### Converting logical to label factor
 step_avg_week$weekday <- as.character(step_avg_week$weekday) 
 step_avg_week$weekday[step_avg_week$weekday==TRUE] <- "weekday"
 step_avg_week$weekday[step_avg_week$weekday==FALSE] <- "weekend"
